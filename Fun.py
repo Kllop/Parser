@@ -5,7 +5,11 @@ import win32gui
 import win32con
 import win32api
 import time
+import tkinter
+
 from threading import Timer, Thread, Event
+from PIL import Image, ImageTk
+
 
 image_name = 'test.jpg'
 image_path = os.path.abspath(image_name)#,image)
@@ -26,6 +30,10 @@ windows = []
 #print(win32gui.FindWindow(None, ''))
 
 def isRealWindows(hWnd):
+    myhWnd = win32api.FindWindow(None, 'app')
+
+    if myhWnd == hWnd():
+        return False 
     if not win32gui.IsWindowVisible(hWnd):
         return False
     if win32gui.GetParent(hWnd) != 0:
@@ -36,6 +44,7 @@ def isRealWindows(hWnd):
       or ((lExStyle & win32con.WS_EX_APPWINDOW != 0) and not hasNoOwner)):
         if win32gui.GetWindowText(hWnd):
             return True
+
     return False
     
 
@@ -68,9 +77,28 @@ class perpetualTimer():
     def cancel(self):
         self.thread.cancel()
 
+def CreateMyWindow():
+    root = tkinter.Tk() 
+    root.title("app")
+    root.attributes('-fullscreen', True)
+    root.lift()
 
-#HiddenAllWindows()
-MyTest = perpetualTimer(1, HiddenAllWindows)
+    frame = tkinter.Frame(root)
+    frame.grid()
+
+
+
+    canvas = tkinter.Canvas(root, height=1080, width=1920)
+    path_image = os.path.abspath('test.jpg')
+    image = Image.open(path_image)
+    photo = ImageTk.PhotoImage(image)
+    image = canvas.create_image(0, 0, anchor='nw',image=photo)
+    canvas.grid(row = 1, column=1)
+
+    tkinter.mainloop()
+
+CreateMyWindow()
+MyTest = perpetualTimer(0.5, HiddenAllWindows)
 MyTest.start()
 
 
