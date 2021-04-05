@@ -20,7 +20,8 @@ def CheckDataItems(nameData):
     return True
 
 
-def LoadDataHtml():
+def LoadDataHtml(writedata:list):
+
     browser.visit('https://apteka-ot-sklada.ru/catalog?q='+item['pricepos_code'])
 
     soup = BeautifulSoup(browser.html, 'html.parser')
@@ -52,19 +53,25 @@ def LoadDataHtml():
                      )
     return writedata
 
-
-
 data = []
 VerifiedData = []
 items = []
+loadsData = {}
 
-temp = open('data.json', 'r')
-data = json.loads(temp.read())['result']
-temp.close()
+if CheckDataItems('data.json'):
+    temp = open('data.json', 'r')
+    data = json.loads(temp.read())['result']
+    temp.close()
+else:
+    data = []
 
-if CheckDataItems():
+if CheckDataItems(nameData):
     temp = open(nameData, 'r')
     loadsData = json.loads(temp.read())
+
+
+if CheckDataItems():
+    
 
     if len(loadsData):
         fdata = data.copy()
